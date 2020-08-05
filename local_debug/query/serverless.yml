@@ -1,0 +1,26 @@
+service: si-sewls-query-once-lambda
+plugins:
+  - serverless-offline
+provider:
+  memorySize: 128
+  name: aws
+  endpointType: regional
+  region: cn-northwest-1 
+  stackName: si-sewls-query-anthena-lambda-${opt:stage}
+  runtime: nodejs12.x
+  versionFunctions: true
+  deploymentBucket: 
+    name: si-sewls-query-once-lambda-deploy-${opt:stage}
+functions:
+  query-anthena:
+    handler: SewlsQueryAthena.queryStatisticDataHandler
+    name: si-sewls-query-once-lambda-${opt:stage}
+    environment:
+      region: cn-northwest-1
+      outputLocation: s3://si-sewls-query-${opt:stage}/query-once/
+      queryDayNum: 30
+      queryMonthNum: 6
+    events:
+      - http:
+          path: /si-sewls-api/v1/sewls/query
+          method: get
